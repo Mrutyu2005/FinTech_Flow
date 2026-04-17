@@ -1,434 +1,222 @@
-\# 🏦 Fintech Wallet \& Transaction Platform
+# 🏦 Fintech Wallet & Transaction Platform
 
+A full-stack, microservices-based financial application that simulates a secure digital wallet system. The platform allows users to register, manage wallet balances, and perform peer-to-peer fund transfers with a complete transaction history.
 
+---
 
-A full-stack, microservices-based financial application that simulates a secure digital wallet system. Users can register, manage wallet balances, and perform peer-to-peer fund transfers with transaction tracking.
-
-
-
-\---
-
-
-
-\## 🧩 System Architecture
-
-
+## 🧩 System Architecture
 
 ```
-
 User → Frontend (React)
-
-&#x20;       ↓
-
-&#x20;  Account Service  ←→  Transaction Service
-
-&#x20;       ↓                     ↓
-
-&#x20;  PostgreSQL DB       PostgreSQL DB
-
+        ↓
+   Account Service  ↔  Transaction Service
+        ↓                     ↓
+   PostgreSQL DB       PostgreSQL DB
 ```
 
+---
 
+## 🏗️ Architecture Overview
 
-\---
+The system is designed using a **microservices architecture**, ensuring separation of concerns, scalability, and maintainability.
 
+### 🔹 Core Services
 
+**Account Service**
 
-\## 🏗️ Architecture Overview
+* Handles user registration and authentication
+* Manages wallet balances
+* Generates and validates JWT tokens
 
+**Transaction Service**
 
+* Processes fund transfers between users
+* Maintains transaction history
+* Communicates securely with the Account Service
 
-This project follows a \*\*Microservices Architecture\*\* to ensure scalability, modularity, and separation of concerns.
+**Frontend (Single Page Application)**
 
+* Interactive user dashboard
+* Fund transfer interface
+* Transaction history visualization
 
+---
 
-\### 🔹 Services
+## 🛠️ Tech Stack
 
+### Backend
 
+* Java 21
+* Spring Boot 3 (Web, Data JPA, Security)
+* PostgreSQL
+* JWT (stateless authentication)
+* Lombok
+* Swagger / OpenAPI
 
-\* \*\*Account Service\*\*
+### Frontend
 
+* React 18
+* Vite
+* Axios
+* React Router DOM
+* CSS
 
+---
 
-&#x20; \* User registration \& authentication
+## ✨ Key Features
 
-&#x20; \* Wallet balance management
+* Secure authentication using JWT
+* Peer-to-peer fund transfer system
+* Transaction history (sent and received)
+* Microservices-based backend architecture
+* Protection against unauthorized data access (IDOR prevention)
+* Responsive and user-friendly interface
 
-&#x20; \* JWT generation \& validation
+---
 
+## 🔗 Service Communication
 
+The **Transaction Service** interacts with the **Account Service** via REST APIs.
 
-\* \*\*Transaction Service\*\*
+* JWT tokens are propagated for authentication
+* Requests are validated before execution
+* Ensures secure inter-service communication
 
+---
 
+## 📡 API Endpoints (Sample)
 
-&#x20; \* Handles fund transfers
+### Account Service
 
-&#x20; \* Maintains transaction history
+* `POST /api/auth/register` — Register a new user
+* `POST /api/auth/login` — Authenticate user
+* `GET /api/account/balance` — Retrieve wallet balance
 
-&#x20; \* Communicates securely with Account Service
+### Transaction Service
 
+* `POST /api/transactions/transfer` — Transfer funds
+* `GET /api/transactions/history` — Fetch transaction history
 
+---
 
-\* \*\*Frontend (SPA)\*\*
+## ⚙️ Getting Started
 
+### Prerequisites
 
+* Java 21+
+* Node.js (v18+)
+* PostgreSQL
+* Maven (or use `mvnw`)
 
-&#x20; \* User dashboard
+---
 
-&#x20; \* Transfer interface
-
-&#x20; \* Transaction history view
-
-
-
-\---
-
-
-
-\## 🛠️ Tech Stack
-
-
-
-\### Backend
-
-
-
-\* Java 21
-
-\* Spring Boot 3 (Web, Data JPA, Security)
-
-\* PostgreSQL
-
-\* JWT Authentication
-
-\* Lombok
-
-\* Swagger / OpenAPI
-
-
-
-\### Frontend
-
-
-
-\* React 18
-
-\* Vite
-
-\* Axios
-
-\* React Router DOM
-
-\* CSS
-
-
-
-\---
-
-
-
-\## ✨ Key Features
-
-
-
-\* 🔐 Secure authentication using JWT
-
-\* 💸 Peer-to-peer fund transfer system
-
-\* 📊 Transaction history (sent \& received)
-
-\* 🔄 Microservices-based architecture
-
-\* 🛡️ Protection against IDOR vulnerabilities
-
-\* ⚡ Responsive and interactive UI
-
-
-
-\---
-
-
-
-\## 🔗 Service Communication
-
-
-
-The \*\*Transaction Service\*\* communicates with the \*\*Account Service\*\* using REST APIs.
-
-
-
-\* JWT tokens are forwarded for authentication
-
-\* Each request is validated before processing
-
-\* Ensures secure inter-service communication
-
-
-
-\---
-
-
-
-\## 📡 API Endpoints (Sample)
-
-
-
-\### Account Service
-
-
-
-\* `POST /api/auth/register` → Register user
-
-\* `POST /api/auth/login` → Login
-
-\* `GET /api/account/balance` → Get wallet balance
-
-
-
-\### Transaction Service
-
-
-
-\* `POST /api/transactions/transfer` → Transfer funds
-
-\* `GET /api/transactions/history` → View transactions
-
-
-
-\---
-
-
-
-\## ⚙️ Getting Started
-
-
-
-\### Prerequisites
-
-
-
-\* Java 21+
-
-\* Node.js (v18+)
-
-\* PostgreSQL
-
-\* Maven (or use `mvnw`)
-
-
-
-\---
-
-
-
-\## 🗄️ Database Setup
-
-
+## 🗄️ Database Setup
 
 ```sql
-
-CREATE DATABASE account\_db;
-
-CREATE DATABASE transaction\_db;
-
+CREATE DATABASE account_db;
+CREATE DATABASE transaction_db;
 ```
 
+---
 
+## ▶️ Running the Application
 
-\---
-
-
-
-\## ▶️ Run the Application
-
-
-
-\### 1️⃣ Start Backend Services
-
-
+### 1. Start Backend Services
 
 ```bash
-
 cd account-service
-
 ./mvnw spring-boot:run
-
 ```
 
-
-
 ```bash
-
 cd transaction-service
-
 ./mvnw spring-boot:run
-
 ```
 
+---
 
-
-\---
-
-
-
-\### 2️⃣ Start Frontend
-
-
+### 2. Start Frontend
 
 ```bash
-
 cd fintech-frontend
-
 npm install
-
 npm run dev
-
 ```
 
+---
 
+## ⚠️ Recommended Run Order
 
-\---
+1. Start PostgreSQL
+2. Start Account Service
+3. Start Transaction Service
+4. Start Frontend
 
+---
 
-
-\## ⚠️ Run Order
-
-
-
-1\. Start PostgreSQL
-
-2\. Start Account Service
-
-3\. Start Transaction Service
-
-4\. Start Frontend
-
-
-
-\---
-
-
-
-\## 📁 Project Structure
-
-
+## 📁 Project Structure
 
 ```
-
 fintech-system/
-
-&#x20;├── account-service/
-
-&#x20;├── transaction-service/
-
-&#x20;├── fintech-frontend/
-
-&#x20;├── README.md
-
-&#x20;└── .gitignore
-
+├── account-service/
+├── transaction-service/
+├── fintech-frontend/
+├── screenshots/
+├── README.md
+└── .gitignore
 ```
 
+---
 
+## 🧠 Design Considerations
 
-\---
+* Adopted microservices for modularity and scalability
+* Implemented JWT for stateless and secure authentication
+* Ensured secure communication between services
+* Applied backend validation to prevent unauthorized data access
 
+---
 
+## 📷 Screenshots
 
-\## 🧠 Design Decisions
+### Signup
 
+![Signup](screenshots/signup.png)
 
+### Login
 
-\* Used microservices to separate core business logic
+![Login](screenshots/login.png)
 
-\* Implemented JWT for stateless authentication
+### KYC Details
 
-\* Ensured secure service-to-service communication
+![KYC](screenshots/kyc_details.png)
 
-\* Prevented unauthorized data access using validation logic
+### Dashboard
 
+![Dashboard](screenshots/dashboard.png)
 
+### Transfer Funds
 
-\---
+![Transfer](screenshots/transfer.png)
 
+### Transaction History
 
+![Transactions](screenshots/transactions.png)
 
+---
 
+## 🚀 Future Improvements
 
-\## 📷 Screenshots
+* API Gateway (Spring Cloud Gateway)
+* Service Discovery (Eureka)
+* Docker containerization
+* Cloud deployment (AWS / Render)
+* Role-based access control
 
+---
 
+## 📌 Summary
 
-\### Login
+This project demonstrates a practical implementation of microservices architecture with secure authentication and transaction handling. It reflects real-world backend design principles applicable to financial systems.
 
-!\[Login](screenshots/login.png)
-
-
-
-\### Signup
-
-!\[Signup](screenshots/signup.png)
-
-
-
-\### Dashboard
-
-!\[Dashboard](screenshots/dashboard.png)
-
-
-
-\### Transactions
-
-!\[Transactions](screenshots/transactions.png)
-
-
-
-\### Transfer
-
-!\[Transfer](screenshots/transfer.png)
-
-
-
-\### KYC Details
-
-!\[KYC](screenshots/kyc details.png)
-
-
-
-\---
-
-
-
-\## 🚀 Future Enhancements
-
-
-
-\* API Gateway (Spring Cloud Gateway)
-
-\* Service Discovery (Eureka)
-
-\* Docker \& containerization
-
-\* Deployment on cloud (AWS / Render)
-
-\* Role-based access control
-
-
-
-\---
-
-
-
-\## 📌 Conclusion
-
-
-
-This project demonstrates practical implementation of microservices architecture, secure authentication, and scalable backend design suitable for real-world financial systems.
-
-
-
-\---
-
-
-
+---
