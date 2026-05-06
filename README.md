@@ -1,18 +1,20 @@
-# 🏦 Fintech Wallet & Transaction Platform
+# 🏦 FinTech Flow — Wallet & Transaction Platform
 
-A full-stack, microservices-based financial application that simulates a secure digital wallet system. The platform allows users to register, manage wallet balances, and perform peer-to-peer fund transfers with a complete transaction history.
+A full-stack, **microservices-based** financial application that simulates a secure digital wallet system. Users can register, manage wallet balances, and perform peer-to-peer fund transfers with a complete transaction history. The platform is fully **Dockerized** for one-command startup.
 
 ---
 
 ## 🧩 System Architecture
 
 ```
-User → Frontend (React)
-        ↓
-   Account Service  ↔  Transaction Service
-        ↓                     ↓
-   PostgreSQL DB       PostgreSQL DB
+User → Frontend (React + Vite) — Port 80
+            ↓
+   Account Service (8081)  ↔  Transaction Service (8082)
+            ↓                          ↓
+     PostgreSQL (account_db)   PostgreSQL (transaction_db)
 ```
+
+> All services communicate inside a shared Docker network. The Transaction Service calls the Account Service via `http://account-service:8081` for balance validation and JWT propagation.
 
 ---
 
@@ -22,120 +24,157 @@ The system is designed using a **microservices architecture**, ensuring separati
 
 ### 🔹 Core Services
 
-**Account Service**
+**Account Service** (`Account-Service/account-service`) — Port `8081`
+- User registration and JWT-based authentication
+- Wallet balance management
+- Exposes REST APIs consumed by the Transaction Service
 
-* Handles user registration and authentication
-* Manages wallet balances
-* Generates and validates JWT tokens
+**Transaction Service** (`Transaction-Service/transaction-service`) — Port `8082`
+- Peer-to-peer fund transfers
+- Daily transaction limit enforcement (`DailyLimitExceededException`)
+- Cross-service JWT token delegation to Account Service
+- Full transaction history (sent + received)
 
-**Transaction Service**
-
-* Processes fund transfers between users
-* Maintains transaction history
-* Communicates securely with the Account Service
-
-**Frontend (Single Page Application)**
-
-* Interactive user dashboard
-* Fund transfer interface
-* Transaction history visualization
+**Frontend** (`fintech-frontend`) — Port `80` (served via Nginx in Docker)
+- React 18 + Vite SPA
+- JWT stored in localStorage; Axios interceptors attach Bearer token
+- Nginx config handles React Router client-side routing
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend
-
-* Java 21
-* Spring Boot 3 (Web, Data JPA, Security)
-* PostgreSQL
-* JWT (stateless authentication)
-* Lombok
-* Swagger / OpenAPI
+| Technology | Purpose |
+|---|---|
+| Java 21 | Core language |
+| Spring Boot 3 | Web, Data JPA, Security |
+| Spring Security + JWT | Stateless authentication |
+| PostgreSQL 15 | Persistent database |
+| Lombok | Boilerplate reduction |
+| Maven (mvnw) | Build tool |
 
 ### Frontend
+| Technology | Purpose |
+|---|---|
+| React 18 | UI library |
+| Vite 5 | Dev server & bundler |
+| Axios | HTTP client |
+| React Router DOM v6 | Client-side routing |
 
-* React 18
-* Vite
-* Axios
-* React Router DOM
-* CSS
+### Infrastructure
+| Technology | Purpose |
+|---|---|
+| Docker | Containerization |
+| Docker Compose | Multi-service orchestration |
+| Nginx | Frontend static file server |
+| PostgreSQL (Docker) | Shared DB container |
 
 ---
 
 ## ✨ Key Features
 
-* Secure authentication using JWT
-* Peer-to-peer fund transfer system
-* Transaction history (sent and received)
-* Microservices-based backend architecture
-* Protection against unauthorized data access (IDOR prevention)
-* Responsive and user-friendly interface
+- ✅ Secure JWT authentication (stateless)
+- ✅ Peer-to-peer fund transfer with balance validation
+- ✅ Daily transaction limit with custom exception handling
+- ✅ Transaction history — both sent and received
+- ✅ Microservices architecture with REST inter-service communication
+- ✅ IDOR prevention — users can only access their own data
+- ✅ Fully Dockerized — single `docker-compose up` to run everything
+- ✅ Nginx reverse-proxy for production-ready frontend serving
 
 ---
 
-## 🔗 Service Communication
+## 📁 Project Structure
 
-The **Transaction Service** interacts with the **Account Service** via REST APIs.
-
-* JWT tokens are propagated for authentication
-* Requests are validated before execution
-* Ensures secure inter-service communication
+```
+mini_project/
+├── Account-Service/
+│   └── account-service/
+│       ├── src/
+│       ├── Dockerfile
+│       ├── pom.xml
+│       └── mvnw
+├── Transaction-Service/
+│   └── transaction-service/
+│       ├── src/
+│       ├── Dockerfile
+│       └── pom.xml
+├── fintech-frontend/
+│   ├── src/
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── package.json
+├── screenshots/
+├── init-dbs.sql
+├── docker-compose.yml
+└── README.md
+```
 
 ---
 
-## 📡 API Endpoints (Sample)
+## 🐳 Running with Docker (Recommended)
 
-### Account Service
+> **Prerequisites:** Docker Desktop installed and running.
 
-* `POST /api/auth/register` — Register a new user
-* `POST /api/auth/login` — Authenticate user
-* `GET /api/account/balance` — Retrieve wallet balance
+```bash
+# Clone the repo
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
 
-### Transaction Service
+# Build images and start all services
+docker-compose up --build
+```
 
-* `POST /api/transactions/transfer` — Transfer funds
-* `GET /api/transactions/history` — Fetch transaction history
+| Service | URL |
+|---|---|
+| Frontend | http://localhost |
+| Account Service API | http://localhost:8081 |
+| Transaction Service API | http://localhost:8082 |
+
+To stop:
+```bash
+docker-compose down
+```
+
+To stop and remove database volumes:
+```bash
+docker-compose down -v
+```
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ Running Manually (Without Docker)
 
 ### Prerequisites
 
-* Java 21+
-* Node.js (v18+)
-* PostgreSQL
-* Maven (or use `mvnw`)
+- Java 21+
+- Node.js 18+
+- PostgreSQL 15 (running locally)
+- Maven (or use the included `mvnw` wrapper)
 
----
-
-## 🗄️ Database Setup
+### 1. Database Setup
 
 ```sql
 CREATE DATABASE account_db;
 CREATE DATABASE transaction_db;
 ```
 
----
-
-## ▶️ Running the Application
-
-### 1. Start Backend Services
+### 2. Start Account Service
 
 ```bash
-cd account-service
+cd Account-Service/account-service
 ./mvnw spring-boot:run
 ```
 
+### 3. Start Transaction Service
+
 ```bash
-cd transaction-service
+cd Transaction-Service/transaction-service
 ./mvnw spring-boot:run
 ```
 
----
-
-### 2. Start Frontend
+### 4. Start Frontend
 
 ```bash
 cd fintech-frontend
@@ -143,80 +182,76 @@ npm install
 npm run dev
 ```
 
----
+### ⚠️ Recommended Run Order
 
-## ⚠️ Recommended Run Order
-
-1. Start PostgreSQL
-2. Start Account Service
-3. Start Transaction Service
-4. Start Frontend
+1. PostgreSQL
+2. Account Service
+3. Transaction Service
+4. Frontend
 
 ---
 
-## 📁 Project Structure
+## 📡 API Endpoints
 
-```
-fintech-system/
-├── account-service/
-├── transaction-service/
-├── fintech-frontend/
-├── screenshots/
-├── README.md
-└── .gitignore
-```
+### Account Service (`localhost:8081`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Authenticate and receive JWT |
+| GET | `/api/account/balance` | Get wallet balance (JWT required) |
+
+### Transaction Service (`localhost:8082`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/transactions/transfer` | Transfer funds to another user |
+| GET | `/api/transactions/history` | Get sent + received transaction history |
 
 ---
 
-## 🧠 Design Considerations
+## 🔗 Service Communication
 
-* Adopted microservices for modularity and scalability
-* Implemented JWT for stateless and secure authentication
-* Ensured secure communication between services
-* Applied backend validation to prevent unauthorized data access
+The **Transaction Service** communicates with the **Account Service** via REST:
+
+- JWT tokens are forwarded via the `Authorization` header
+- Configured via environment variable: `ACCOUNT_SERVICE_URL=http://account-service:8081`
+- Balance deduction and credit happen in a coordinated flow with proper error handling
 
 ---
 
 ## 📷 Screenshots
 
 ### Signup
-
 ![Signup](screenshots/signup.png)
 
 ### Login
-
 ![Login](screenshots/login.png)
 
 ### KYC Details
-
 ![KYC](screenshots/kyc_details.png)
 
 ### Dashboard
-
 ![Dashboard](screenshots/dashboard.png)
 
 ### Transfer Funds
-
 ![Transfer](screenshots/transfer.png)
 
 ### Transaction History
-
 ![Transactions](screenshots/transactions.png)
 
 ---
 
 ## 🚀 Future Improvements
 
-* API Gateway (Spring Cloud Gateway)
-* Service Discovery (Eureka)
-* Docker containerization
-* Cloud deployment (AWS / Render)
-* Role-based access control
+- API Gateway (Spring Cloud Gateway)
+- Service Discovery (Eureka / Consul)
+- Cloud deployment (AWS ECS / Render)
+- Role-based access control (Admin panel)
+- Email/OTP-based 2FA
 
 ---
 
 ## 📌 Summary
 
-This project demonstrates a practical implementation of microservices architecture with secure authentication and transaction handling. It reflects real-world backend design principles applicable to financial systems.
-
----
+This project demonstrates a real-world implementation of microservices architecture with secure JWT authentication, containerized deployment, and peer-to-peer transaction management — reflecting backend design principles applicable to production financial systems.

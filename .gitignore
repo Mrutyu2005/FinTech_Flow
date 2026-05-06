@@ -1,6 +1,63 @@
+# ============================
+# Java / Maven
+# ============================
 target/
 *.class
+*.jar
+*.war
+*.ear
+*.nar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.mvn/wrapper/maven-wrapper.jar
+HELP.md
+
+# ============================
+# Spring Boot log files
+# ============================
 *.log
-.idea/
-.vscode/
+acc.log
+tx.log
+acc-service.log
+tx-service.log
+
+# ============================
+# Node / React (fintech-frontend)
+# ============================
+node_modules/
 dist/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================
+# IDE files
+# ============================
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+.apt_generated/
+
+# ============================
+# OS files
+# ============================
+.DS_Store
+Thumbs.db
+
+# ============================
+# Docker volumes (local dev)
+# ============================
+postgres_data/

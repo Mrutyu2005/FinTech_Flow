@@ -1,0 +1,5 @@
+target
+.mvn
+node_modules
+.idea
+*.log
